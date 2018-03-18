@@ -6,22 +6,22 @@
 # Reference: http://www.virtuallyghetto.com/2017/10/vghetto-automated-nsx-t-2-0-lab-deployment.html
 
 # vCenter Server used to deploy Lab
-$VIServer = "vcenter.primp-industries.com"
-$VIUsername = "primp"
-$VIPassword = "MY-SUPER-DUPER-SECURE-PASSWORD-IS-VMWARE-123"
+$VIServer = "192.168.10.13"
+$VIUsername = "administrator@vsphere.local"
+$VIPassword = "***************"
 
 # Full Path to both the Nested ESXi 6.5u1 VA, Extracted VCSA 6.5u1 ISO & NSX-T OVAs
-$NestedESXiApplianceOVA = "C:\Users\primp\Desktop\Nested_ESXi6.5_Appliance_Template_v1.ova"
-$VCSAInstallerPath = "C:\Users\primp\Desktop\VMware-VCSA-all-6.5.0-5973321"
-$NSXTManagerOVA = "C:\Users\primp\Desktop\nsx-unified-appliance-2.0.0.0.0.6522097.ova"
-$NSXTControllerOVA = "C:\Users\primp\Desktop\nsx-controller-2.0.0.0.0.6522091.ova"
-$NSXTEdgeOVA = "C:\Users\primp\Desktop\nsx-edge-2.0.0.0.0.6522113.ova"
+$NestedESXiApplianceOVA = (Get-Item -Path "./ISO/Nested_ESXi6.5u1_Appliance_Template_v1.0.ova" -Verbose)
+$VCSAInstallerPath = (Get-Item -Path "./ISO/VMware-VCSA-all-6.5.0-7515524" -Verbose)
+$NSXTManagerOVA = (Get-Item -Path "./ISO/nsx-unified-appliance-2.1.0.0.0.7395503.ova" -Verbose)
+$NSXTControllerOVA = (Get-Item -Path "./ISO/nsx-controller-2.1.0.0.0.7395493.ova" -Verbose)
+$NSXTEdgeOVA = (Get-Item -Path "./ISO/nsx-edge-2.1.0.0.0.7395502.ova" -Verbose)
 
 # Nested ESXi VMs to deploy
 $NestedESXiHostnameToIPs = @{
-"vesxi65-1" = "172.30.0.171"
-"vesxi65-2" = "172.30.0.172"
-"vesxi65-3" = "172.30.0.173"
+"vesxi65-1" = "192.168.20.10"
+"vesxi65-2" = "192.168.20.11"
+"vesxi65-3" = "192.168.20.12"
 }
 
 # Nested ESXi VM Resources
@@ -33,8 +33,8 @@ $NestedESXiCapacityvDisk = "12" #GB
 # VCSA Deployment Configuration
 $VCSADeploymentSize = "tiny"
 $VCSADisplayName = "vcenter65-1"
-$VCSAIPAddress = "172.30.0.170"
-$VCSAHostname = "vcenter65-1.primp-industries.com" #Change to IP if you don't have valid DNS
+$VCSAIPAddress = "192.168.20.13"
+$VCSAHostname = "192.168.20.13" #Change to IP if you don't have valid DNS
 $VCSAPrefix = "24"
 $VCSASSODomainName = "vsphere.local"
 $VCSASSOSiteName = "virtuallyGhetto"
@@ -43,17 +43,17 @@ $VCSARootPassword = "VMware1!"
 $VCSASSHEnable = "true"
 
 # General Deployment Configuration for Nested ESXi, VCSA & NSX VMs
-$VMCluster = "Primp-Cluster"
+$VMCluster = "Cluster0"
 $VirtualSwitchType = "VDS" # VSS or VDS
-$VMNetwork = "dv-access333-dev"
-$VMDatastore = "himalaya-local-SATA-dc3500-1"
+$VMNetwork = "DPG01"
+$VMDatastore = "vSphereDS"
 $VMNetmask = "255.255.255.0"
-$VMGateway = "172.30.0.1"
-$VMDNS = "172.30.0.100"
+$VMGateway = "192.168.20.1"
+$VMDNS = "192.168.1.1"
 $VMNTP = "pool.ntp.org"
 $VMPassword = "VMware1!"
-$VMDomain = "primp-industries.com"
-$VMSyslog = "172.30.0.170"
+$VMDomain = "paaslife.com"
+$VMSyslog = "192.168.20.170"
 # Applicable to Nested ESXi only
 $VMSSH = "true"
 $VMVMFS = "false"
@@ -71,14 +71,14 @@ $NSXAuditUsername = "audit"
 $NSXAuditPassword = "VMware1!"
 $NSXSSHEnable = "true"
 $NSXEnableRootLogin = "true" # this is required to be true for now until we have NSX-T APIs for initial setup
-$NSXPrivatePortgroup = "dv-private-network"
+$NSXPrivatePortgroup = "DPG02"
 
 $TunnelEndpointName = "TEP-IP-Pool"
 $TunnelEndpointDescription = "Tunnel Endpoint for Transport Nodes"
-$TunnelEndpointIPRangeStart = "192.168.1.10"
-$TunnelEndpointIPRangeEnd = "192.168.1.20"
-$TunnelEndpointCIDR = "192.168.1.0/24"
-$TunnelEndpointGateway = "192.168.1.1"
+$TunnelEndpointIPRangeStart = "192.168.30.10"
+$TunnelEndpointIPRangeEnd = "192.168.30.20"
+$TunnelEndpointCIDR = "192.168.30.0/24"
+$TunnelEndpointGateway = "192.168.30.1"
 
 $OverlayTransportZoneName = "Overlay-TZ"
 $VlanTransportZoneName = "VLAN-TZ"
@@ -105,24 +105,24 @@ $NSXTMgrDeploymentSize = "small"
 $NSXTMgrvCPU = "2"
 $NSXTMgrvMEM = "8"
 $NSXTMgrDisplayName = "nsxt-mgr"
-$NSXTMgrHostname = "nsxt-mgr.primp-industries.com"
-$NSXTMgrIPAddress = "172.30.0.201"
+$NSXTMgrHostname = "192.168.20.201"
+$NSXTMgrIPAddress = "192.168.20.201"
 
 # NSX-T Controller Configurations
 $NSXTCtrvCPU = "2"
 $NSXTCtrvMEM = "6"
 $NSXControllerSharedSecret = "s3cR3ctz"
 $NSXTControllerHostnameToIPs = @{
-"nsxt-ctr1" = "172.30.0.203"
-"nsxt-ctr2" = "172.30.0.204"
-"nsxt-ctr3" = "172.30.0.205"
+"nsxt-ctr1" = "192.168.20.203"
+"nsxt-ctr2" = "192.168.20.204"
+"nsxt-ctr3" = "192.168.20.205"
 }
 
 # NSX-T Edge Configuration
 $NSXTEdgevCPU = "2"
 $NSXTEdgevMEM = "4"
 $NSXTEdgeHostnameToIPs = @{
-"nsxt-edge" = "172.30.0.202"
+"nsxt-edge" = "192.168.20.202"
 }
 
 # Advanced Configurations
@@ -175,6 +175,7 @@ $moveVMsIntovApp = 1
 
 $StartTime = Get-Date
 
+
 Function Get-SSLThumbprint256 {
     param(
     [Parameter(
@@ -187,31 +188,12 @@ Function Get-SSLThumbprint256 {
     [String]$URL
     )
 
-add-type @"
-        using System.Net;
-        using System.Security.Cryptography.X509Certificates;
-            public class IDontCarePolicy : ICertificatePolicy {
-            public IDontCarePolicy() {}
-            public bool CheckValidationResult(
-                ServicePoint sPoint, X509Certificate cert,
-                WebRequest wRequest, int certProb) {
-                return true;
-            }
-        }
-"@
-    [System.Net.ServicePointManager]::CertificatePolicy = new-object IDontCarePolicy
+    $SSL_THUMBPRINT = Write-Host echo -n | openssl s_client -connect ($URL).Replace("https://", "") 2>/dev/null | openssl x509 -noout -fingerprint -sha256 | sed 's/SHA256 Fingerprint=//'
 
-    # Need to connect using simple GET operation for this to work
-    Invoke-RestMethod -Uri $URL -Method Get | Out-Null
-
-    $ENDPOINT_REQUEST = [System.Net.Webrequest]::Create("$URL")
-    $CERT = $ENDPOINT_REQUEST.ServicePoint.Certificate
-    # https://stackoverflow.com/a/22251597
-    $BYTES = $cert.Export([Security.Cryptography.X509Certificates.X509ContentType]::Cert)
-    Set-content -value $BYTES -encoding byte -path $ENV:TMP\cert-temp
-    $SSL_THUMBPRINT = (Get-FileHash -Path $ENV:TMP\cert-temp -Algorithm SHA256).Hash
-    return $SSL_THUMBPRINT -replace '(..(?!$))','$1:'
+    return $SSL_THUMBPRINT 
 }
+
+
 
 Function Set-VMKeystrokes {
     <#
@@ -605,6 +587,7 @@ if($datastore.Type -eq "vsan") {
 
 if($deployNestedESXiVMs -eq 1) {
     $NestedESXiHostnameToIPs.GetEnumerator() | Sort-Object -Property Value | Foreach-Object {
+
         $VMName = $_.Key
         $VMIPAddress = $_.Value
 
@@ -649,6 +632,7 @@ if($deployNestedESXiVMs -eq 1) {
 }
 
 if($DeployNSX -eq 1) {
+
     # Deploy NSX Manager
     $nsxMgrOvfConfig = Get-OvfConfiguration $NSXTManagerOVA
     $nsxMgrOvfConfig.DeploymentOption.Value = $NSXTMgrDeploymentSize
@@ -694,6 +678,7 @@ if($DeployNSX -eq 1) {
     # Deploy Controllers
     $nsxCtrOvfConfig = Get-OvfConfiguration $NSXTControllerOVA
     $NSXTControllerHostnameToIPs.GetEnumerator() | Sort-Object -Property Value | Foreach-Object {
+   
         $VMName = $_.Key
         $VMIPAddress = $_.Value
         $VMHostname = "$VMName" + "@" + $VMDomain
@@ -739,6 +724,7 @@ if($DeployNSX -eq 1) {
     # Deploy Edges
     $nsxEdgeOvfConfig = Get-OvfConfiguration $NSXTEdgeOVA
     $NSXTEdgeHostnameToIPs.GetEnumerator() | Sort-Object -Property Value | Foreach-Object {
+        
         $VMName = $_.Key
         $VMIPAddress = $_.Value
         $VMHostname = "$VMName" + "@" + $VMDomain
@@ -815,10 +801,10 @@ if($deployVCSA -eq 1) {
         $config.'new.vcsa'.sso.'site-name' = $VCSASSOSiteName
 
         My-Logger "Creating VCSA JSON Configuration file for deployment ..."
-        $config | ConvertTo-Json | Set-Content -Path "$($ENV:Temp)\jsontemplate.json"
+        $config | ConvertTo-Json | Set-Content -Path "$($ENV:TMPDIR)\jsontemplate.json"
 
         My-Logger "Deploying the VCSA ..."
-        Invoke-Expression "$($VCSAInstallerPath)\vcsa-cli-installer\win32\vcsa-deploy.exe install --no-esx-ssl-verify --accept-eula --acknowledge-ceip $($ENV:Temp)\jsontemplate.json"| Out-File -Append -LiteralPath $verboseLogFile
+        Invoke-Expression "$($VCSAInstallerPath)/vcsa-cli-installer/mac/vcsa-deploy install --no-esx-ssl-verify --accept-eula --acknowledge-ceip $($ENV:TMPDIR)/jsontemplate.json"| Out-File -Append -LiteralPath $verboseLogFile
 }
 
 if($moveVMsIntovApp -eq 1) {
@@ -872,7 +858,7 @@ if($setupNewVC -eq 1) {
     New-Cluster -Server $vc -Name $NewVCVSANClusterName -Location (Get-Datacenter -Name $NewVCDatacenterName -Server $vc) -DrsEnabled -VsanEnabled -VsanDiskClaimMode 'Manual' | Out-File -Append -LiteralPath $verboseLogFile
 
     if($addESXiHostsToVC -eq 1) {
-        $NestedESXiHostnameToIPs.GetEnumerator() | sort -Property Value | Foreach-Object {
+        $NestedESXiHostnameToIPs.GetEnumerator() | Sort-Object -Property Value | Foreach-Object {
             $VMName = $_.Key
             $VMIPAddress = $_.Value
 
@@ -943,7 +929,7 @@ if($initialNSXConfig -eq 1 -and $DeployNSX -eq 1) {
     # Retrieve NSX Manager Thumbprint which will be needed later
     My-Logger "Retrieving NSX Manager Thumbprint ..."
     $nsxMgrID = (Get-NsxtService -Name "com.vmware.nsx.cluster.nodes").list().results.id
-    $nsxMgrCertThumbprint = (Get-NsxtService -Name "com.vmware.nsx.cluster.nodes").get($nsxMgrID).manager_role.api_listen_addr.certificate_sha256_thumbprint
+    $nsxMgrCertThumbprint = (Get-NsxtService -Name "com.vmware.nsx.cluster.nodes").get($nsxMgrID.split()[-1]).manager_role.api_listen_addr.certificate_sha256_thumbprint
 
     ### Setup NSX Controllers
     $ctrCount=0
@@ -961,19 +947,19 @@ if($initialNSXConfig -eq 1 -and $DeployNSX -eq 1) {
             # Login by passing in admin username <enter>
             if($debug) { My-Logger "Sending admin username ..." }
             Set-VMKeystrokes -VMName $nsxCtrName -StringInput $NSXAdminUsername -ReturnCarriage $true
-            Start-Sleep 2
+            Start-Sleep 10
 
             # Login by passing in admin password <enter>
             if($debug) { My-Logger "Sending admin password ..." }
             Set-VMKeystrokes -VMName $nsxCtrName -StringInput $NSXAdminPassword -ReturnCarriage $true
-            Start-Sleep 5
+            Start-Sleep 10
 
             # Join Controller to NSX Manager
             if($debug) { My-Logger "Sending join management plane command ..." }
             $joinMgmtCmd1 = "join management-plane $NSXTMgrIPAddress username $NSXAdminUsername thumbprint $nsxMgrCertThumbprint"
             $joinMgmtCmd2 = "$NSXAdminPassword"
             Set-VMKeystrokes -VMName $nsxCtrName -StringInput $joinMgmtCmd1 -ReturnCarriage $true
-            Start-Sleep 5
+            Start-Sleep 10
             Set-VMKeystrokes -VMName $nsxCtrName -StringInput $joinMgmtCmd2 -ReturnCarriage $true
             Start-Sleep 25
 
@@ -981,7 +967,7 @@ if($initialNSXConfig -eq 1 -and $DeployNSX -eq 1) {
             if($debug) { My-Logger "Sending shared secret command ..." }
             $sharedSecretCmd = "set control-cluster security-model shared-secret secret $NSXControllerSharedSecret"
             Set-VMKeystrokes -VMName $nsxCtrName -StringInput $sharedSecretCmd -ReturnCarriage $true
-            Start-Sleep  5
+            Start-Sleep  10
 
             # Initialize NSX Controller Cluster
             if($debug) { My-Logger "Sending control cluster init command ..." }
@@ -994,19 +980,19 @@ if($initialNSXConfig -eq 1 -and $DeployNSX -eq 1) {
             # Login by passing in admin username <enter>
             if($debug) { My-Logger "Sending admin username ..." }
             Set-VMKeystrokes -VMName $nsxCtrName -StringInput $NSXAdminUsername -ReturnCarriage $true
-            Start-Sleep 2
+            Start-Sleep 10
 
             # Login by passing in admin password <enter>
             if($debug) { My-Logger "Sending admin password ..." }
             Set-VMKeystrokes -VMName $nsxCtrName -StringInput $NSXAdminPassword -ReturnCarriage $true
-            Start-Sleep 5
+            Start-Sleep 15
 
             # Join Controller to NSX Manager
             if($debug) { My-Logger "Sending join management plane command ..." }
             $joinMgmtCmd1 = "join management-plane $NSXTMgrIPAddress username $NSXAdminUsername thumbprint $nsxMgrCertThumbprint"
             $joinMgmtCmd2 = "$NSXAdminPassword"
             Set-VMKeystrokes -VMName $nsxCtrName -StringInput $joinMgmtCmd1 -ReturnCarriage $true
-            Start-Sleep 5
+            Start-Sleep 10
             Set-VMKeystrokes -VMName $nsxCtrName -StringInput $joinMgmtCmd2 -ReturnCarriage $true
             Start-Sleep 25
 
@@ -1014,7 +1000,7 @@ if($initialNSXConfig -eq 1 -and $DeployNSX -eq 1) {
             if($debug) { My-Logger "Sending shared secret command ..." }
             $sharedSecretCmd = "set control-cluster security-model shared-secret secret $NSXControllerSharedSecret"
             Set-VMKeystrokes -VMName $nsxCtrName -StringInput $sharedSecretCmd -ReturnCarriage $true
-            Start-Sleep 5
+            Start-Sleep 10
 
             ### --- (stupid hack because we don't have an API) --- ###
                 # Exit from nsxcli
@@ -1025,12 +1011,12 @@ if($initialNSXConfig -eq 1 -and $DeployNSX -eq 1) {
                 # Login using root
                 if($debug) { My-Logger "Sending root username ..." }
                 Set-VMKeystrokes -VMName $nsxCtrName -StringInput "root" -ReturnCarriage $true
-                Start-Sleep 2
+                Start-Sleep 10
 
                 # Login by passing in root password <enter>
                 if($debug) { My-Logger "Sending root password ..." }
                 Set-VMKeystrokes -VMName $nsxCtrName -StringInput $NSXRootPassword -ReturnCarriage $true
-                Start-Sleep 10
+                Start-Sleep 15
 
                 # Retrieve Control Cluster Thumbprint by running nsxcli in the shell and
                 # storing the thumbprint to a file which we will download later
@@ -1040,8 +1026,8 @@ if($initialNSXConfig -eq 1 -and $DeployNSX -eq 1) {
                 Start-Sleep 25
 
                 if($debug) { My-Logger "Processing certificate thumbprint ..." }
-                Copy-VMGuestFile -vm (Get-VM -Name $nsxCtrName) -GuestToLocal -GuestUser "root" -GuestPassword $NSXRootPassword -Source /tmp/controller-thumbprint -Destination $ENV:TMP\controller-thumbprint | Out-Null
-                $nsxControllerCertThumbprint = Get-Content -Path $ENV:TMP\controller-thumbprint | ? {$_.trim() -ne "" }
+                Copy-VMGuestFile -vm (Get-VM -Name $nsxCtrName) -GuestToLocal -GuestUser "root" -GuestPassword $NSXRootPassword -Source /tmp/controller-thumbprint -Destination "$($ENV:TMPDIR)controller-thumbprint" | Out-Null
+                $nsxControllerCertThumbprint = Get-Content -Path "$($ENV:TMPDIR)controller-thumbprint" | ? {$_.trim() -ne "" }
 
                 # Exit from shell
                 if($debug) { My-Logger "Sending exit command ..." }
@@ -1052,12 +1038,12 @@ if($initialNSXConfig -eq 1 -and $DeployNSX -eq 1) {
             # Login by passing in admin username <enter>
             if($debug) { My-Logger "Sending admin username ..." }
             Set-VMKeystrokes -VMName $nsxCtrName -StringInput $NSXAdminUsername -ReturnCarriage $true
-            Start-Sleep 2
+            Start-Sleep 10
 
             # Login by passing in admin password <enter>
             if($debug) { My-Logger "Sending admin password ..." }
             Set-VMKeystrokes -VMName $nsxCtrName -StringInput $NSXAdminPassword -ReturnCarriage $true
-            Start-Sleep 5
+            Start-Sleep 10
 
             # Join NSX Controller to NSX Controller Cluster
             if($debug) { My-Logger "Sending join control cluster command ..." }
@@ -1088,19 +1074,19 @@ if($initialNSXConfig -eq 1 -and $DeployNSX -eq 1) {
         # Login by passing in admin username <enter>
         if($debug) { My-Logger "Sending admin username ..." }
         Set-VMKeystrokes -VMName $nsxEdgeName -StringInput $NSXAdminUsername -ReturnCarriage $true
-        Start-Sleep 2
+        Start-Sleep 10
 
         # Login by passing in admin password <enter>
         if($debug) { My-Logger "Sending admin password ..." }
         Set-VMKeystrokes -VMName $nsxEdgeName -StringInput $NSXAdminPassword -ReturnCarriage $true
-        Start-Sleep 5
+        Start-Sleep 10
 
         # Join NSX Edge to NSX Manager
         if($debug) { My-Logger "Sending join management plane command ..." }
         $joinMgmtCmd1 = "join management-plane $NSXTMgrIPAddress username $NSXAdminUsername thumbprint $nsxMgrCertThumbprint"
         $joinMgmtCmd2 = "$NSXAdminPassword"
         Set-VMKeystrokes -VMName $nsxEdgeName -StringInput $joinMgmtCmd1 -ReturnCarriage $true
-        Start-Sleep 5
+        Start-Sleep 10
         Set-VMKeystrokes -VMName $nsxEdgeName -StringInput $joinMgmtCmd2 -ReturnCarriage $true
         Start-Sleep 20
 
@@ -1213,11 +1199,11 @@ if($postDeployNSXConfig -eq 1 -and $DeployNSX -eq 1) {
 
     if($runAddVC) {
         My-Logger "Adding vCenter Server Compute Manager ..."
-        $computeManagerSerivce = Get-NsxtService -Name "com.vmware.nsx.fabric.compute_managers"
+        $computeManagerService = Get-NsxtService -Name "com.vmware.nsx.fabric.compute_managers"
         $computeManagerStatusService = Get-NsxtService -Name "com.vmware.nsx.fabric.compute_managers.status"
 
-        $computeManagerSpec = $computeManagerSerivce.help.create.compute_manager.Create()
-        $credentialSpec = $computeManagerSerivce.help.create.compute_manager.credential.username_password_login_credential.Create()
+        $computeManagerSpec = $computeManagerService.help.create.compute_manager.Create()
+        $credentialSpec = $computeManagerService.help.create.compute_manager.credential.username_password_login_credential.Create()
         $VCUsername = "administrator@$VCSASSODomainName"
         $VCURL = "https://" + $VCSAHostname + ":443"
         $VCThumbprint = Get-SSLThumbprint256 -URL $VCURL
@@ -1228,7 +1214,7 @@ if($postDeployNSXConfig -eq 1 -and $DeployNSX -eq 1) {
         $computeManagerSpec.origin_type = "vCenter"
         $computeManagerSpec.display_name = $VCSAHostname
         $computeManagerSpec.credential = $credentialSpec
-        $computeManagerResult = $computeManagerSerivce.create($computeManagerSpec)
+        $computeManagerResult = $computeManagerService.create($computeManagerSpec)
 
         if($debug) { My-Logger "Waiting for VC registration to complete ..." }
             while ( $computeManagerStatusService.get($computeManagerResult.id).registration_status -ne "REGISTERED") {
