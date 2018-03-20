@@ -8,7 +8,7 @@
 # vCenter Server used to deploy Lab
 $VIServer = "192.168.10.13"
 $VIUsername = "administrator@vsphere.local"
-$VIPassword = "***************"
+$VIPassword = "g!JQz9uBA9pv13f6"
 
 # Full Path to both the Nested ESXi 6.5u1 VA, Extracted VCSA 6.5u1 ISO & NSX-T OVAs
 $NestedESXiApplianceOVA = (Get-Item -Path "./ISO/Nested_ESXi6.5u1_Appliance_Template_v1.0.ova" -Verbose)
@@ -929,7 +929,13 @@ if($initialNSXConfig -eq 1 -and $DeployNSX -eq 1) {
     # Retrieve NSX Manager Thumbprint which will be needed later
     My-Logger "Retrieving NSX Manager Thumbprint ..."
     $nsxMgrID = (Get-NsxtService -Name "com.vmware.nsx.cluster.nodes").list().results.id
-    $nsxMgrCertThumbprint = (Get-NsxtService -Name "com.vmware.nsx.cluster.nodes").get($nsxMgrID.split()[-1]).manager_role.api_listen_addr.certificate_sha256_thumbprint
+
+    $nsxMgrID | ForEach-Object {
+        $thumbprint = (Get-NsxtService -Name "com.vmware.nsx.cluster.nodes").get($_).manager_role.api_listen_addr.certificate_sha256_thumbprint
+        if ($thumbprint) { Set-Variable -Name "nsxMgrCertThumbprint" -Value $thumbprint }
+    }
+
+    My-Logger "NSX Manager thumbprint is $nsxMgrCertThumbprint" 
 
     ### Setup NSX Controllers
     $ctrCount=0
@@ -956,11 +962,8 @@ if($initialNSXConfig -eq 1 -and $DeployNSX -eq 1) {
 
             # Join Controller to NSX Manager
             if($debug) { My-Logger "Sending join management plane command ..." }
-            $joinMgmtCmd1 = "join management-plane $NSXTMgrIPAddress username $NSXAdminUsername thumbprint $nsxMgrCertThumbprint"
-            $joinMgmtCmd2 = "$NSXAdminPassword"
+            $joinMgmtCmd1 = "join management-plane $NSXTMgrIPAddress username $NSXAdminUsername thumbprint $nsxMgrCertThumbprint password $NSXAdminPassword"
             Set-VMKeystrokes -VMName $nsxCtrName -StringInput $joinMgmtCmd1 -ReturnCarriage $true
-            Start-Sleep 10
-            Set-VMKeystrokes -VMName $nsxCtrName -StringInput $joinMgmtCmd2 -ReturnCarriage $true
             Start-Sleep 25
 
             # Setup shared secret
@@ -989,11 +992,8 @@ if($initialNSXConfig -eq 1 -and $DeployNSX -eq 1) {
 
             # Join Controller to NSX Manager
             if($debug) { My-Logger "Sending join management plane command ..." }
-            $joinMgmtCmd1 = "join management-plane $NSXTMgrIPAddress username $NSXAdminUsername thumbprint $nsxMgrCertThumbprint"
-            $joinMgmtCmd2 = "$NSXAdminPassword"
+            $joinMgmtCmd1 = "join management-plane $NSXTMgrIPAddress username $NSXAdminUsername thumbprint $nsxMgrCertThumbprint password $NSXAdminPassword"
             Set-VMKeystrokes -VMName $nsxCtrName -StringInput $joinMgmtCmd1 -ReturnCarriage $true
-            Start-Sleep 10
-            Set-VMKeystrokes -VMName $nsxCtrName -StringInput $joinMgmtCmd2 -ReturnCarriage $true
             Start-Sleep 25
 
             # Setup shared secret
