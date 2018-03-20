@@ -8,7 +8,7 @@
 # vCenter Server used to deploy Lab
 $VIServer = "192.168.10.13"
 $VIUsername = "administrator@vsphere.local"
-$VIPassword = "g!JQz9uBA9pv13f6"
+$VIPassword = $($ENV:VCENTER_PASSWORD) 
 
 # Full Path to both the Nested ESXi 6.5u1 VA, Extracted VCSA 6.5u1 ISO & NSX-T OVAs
 $NestedESXiApplianceOVA = (Get-Item -Path "./ISO/Nested_ESXi6.5u1_Appliance_Template_v1.0.ova" -Verbose)
