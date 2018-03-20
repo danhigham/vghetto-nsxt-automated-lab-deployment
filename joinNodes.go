@@ -15,8 +15,10 @@ var escapePrompt = []byte("localhost> ")
 func main() {
 
 	var mgmtThumb = flag.String("mgmt-thumb", "", "help message for flagname")
-	var adminUser = flag.String("admin-user", "root", "")
+	var adminUser = flag.String("admin-user", "admin", "")
 	var adminPass = flag.String("admin-pass", "VMware1!", "")
+	var rootUser = flag.String("root-user", "root", "")
+	var rootPass = flag.String("root-pass", "VMware1!", "")
 	var mgmtIP = flag.String("nsx-mgmt-ip", "", "")
 	var secret = flag.String("secret", "", "")
 	
@@ -26,9 +28,9 @@ func main() {
 	flag.Parse()
 
 	sshConfig := &ssh.ClientConfig{
-	User: *adminUser,
+	User: *rootUser,
 		Auth: []ssh.AuthMethod{
-			ssh.Password(*adminPass),
+			ssh.Password(*rootPass),
 		},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			return nil
